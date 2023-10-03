@@ -55,6 +55,8 @@ def rmse_euler(estimate, truth):
            rmse(estimate[2], truth[2])]
 
 if __name__ == '__main__':
+    #Test
+    
     accel_cov = 0.001
     accel_bias = np.array([0.6, 0.02, 0.05])
     mag_cov = 0.001
