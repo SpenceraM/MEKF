@@ -79,9 +79,9 @@ class Kalman:
 
         #Form Kalman gain
         H = np.zeros(shape=(6,18), dtype=float)
-        H[0:3, 0:3] = skewSymmetric(self.estimate.inverse.rotate(np.array([0.0, 0.0, -1.0])))
+        H[0:3, 0:3] = skewSymmetric(self.estimate.inverse.rotate(np.array([0.0, 0.0, -1.0]))) # accelarometer
         H[0:3, 12:15] = np.identity(3, dtype=float)
-        H[3:6, 0:3] = skewSymmetric(self.estimate.inverse.rotate(np.array([1.0, 0, 0])))
+        H[3:6, 0:3] = skewSymmetric(self.estimate.inverse.rotate(np.array([1.0, 0, 0])))  # magnetometer
         H[3:6, 15:18] = np.identity(3, dtype=float)
         PH_T = np.dot(self.estimate_covariance, H.transpose())
         inn_cov = H.dot(PH_T) + self.observation_covariance
@@ -100,7 +100,7 @@ class Kalman:
         aposteriori_state = np.dot(K, (observation - predicted_observation).transpose())
 
         #Fold filtered error state back into full state estimates
-        self.estimate = self.estimate * Quaternion(scalar = 1, vector = 0.5*aposteriori_state[0:3])
+        self.estimate = self.estimate * Quaternion(scalar = 1, vector = 0.5*aposteriori_state[0:3])  # ref times error
         self.estimate = self.estimate.normalised
         self.gyro_bias += aposteriori_state[9:12]
         self.accelerometer_bias += aposteriori_state[12:15]
