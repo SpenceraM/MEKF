@@ -100,7 +100,15 @@ class Kalman:
         aposteriori_state = np.dot(K, (observation - predicted_observation).transpose())
 
         #Fold filtered error state back into full state estimates
-        self.estimate = self.estimate * Quaternion(scalar = 1, vector = 0.5*aposteriori_state[0:3])  # ref times error
+        vec = aposteriori_state[0:3]
+        vec_norm = np.linalg.norm(vec)
+        if 0: # OG
+            self.estimate = self.estimate * Quaternion(scalar = 1, vector = 0.5*vec)  # ref times error
+        elif 0:
+            self.estimate = self.estimate * Quaternion(scalar = np.cos(vec_norm/2), vector =vec/vec_norm*np.sin(vec_norm/2))  # ref times error
+        elif 0:
+            temp = 1/np.sqrt(4+vec_norm**2) * np.concatenate([[2], vec])
+            self.estimate = self.estimate * Quaternion(scalar = temp[0], vector = temp[1:])
         self.estimate = self.estimate.normalised
         self.gyro_bias += aposteriori_state[9:12]
         self.accelerometer_bias += aposteriori_state[12:15]

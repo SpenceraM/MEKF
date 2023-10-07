@@ -54,9 +54,10 @@ def rmse_euler(estimate, truth):
            rmse(estimate[1], truth[1]),
            rmse(estimate[2], truth[2])]
 
+
 if __name__ == '__main__':
-    #Test
-    
+    npr.seed(0)
+
     accel_cov = 0.001
     accel_bias = np.array([0.6, 0.02, 0.05])
     mag_cov = 0.001
@@ -83,13 +84,13 @@ if __name__ == '__main__':
         if (i % 10 == 0):
           real_measurement = npr.normal(0.0, 1.0, 3)
 
-        gyro_measurement = gyro.measure(time_delta, real_measurement)
+        gyro_measurement = gyro.measure(time_delta, real_measurement)  # with noise, bias, and bias drift
 
         dead_reckoning_estimate.update(time_delta, gyro_measurement)
         dead_reckoning_rotation_estimates.append(dead_reckoning_estimate.orientation)
 
-        true_orientation.update(time_delta, real_measurement)
-        true_rotations.append(true_orientation.orientation)
+        true_orientation.update(time_delta, real_measurement)  # GT
+        true_rotations.append(true_orientation.orientation)  # GT
         
         measured_acc = accelerometer.measure(time_delta, true_orientation.orientation)
         measured_mag = magnetometer.measure(time_delta, true_orientation.orientation)
